@@ -1,27 +1,23 @@
 package club.someoneice.game.spongeswap.spongebob.screen;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.google.common.collect.Lists;
-
 import club.someoneice.game.spongeswap.spongebob.GameMain;
 import club.someoneice.game.spongeswap.spongebob.util.BaseScreen;
 import club.someoneice.game.spongeswap.spongebob.util.Util;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.google.common.collect.Lists;
 
 import java.util.List;
 
-public class StartScreen extends BaseScreen implements InputProcessor {
+public class StartScreen extends BaseScreen {
     private SpriteBatch batch;
 
     private int choose = 0;
-    private List<String> textList = Lists.newArrayList();
+    private final List<String> textList = Lists.newArrayList();
 
     @Override
     public void join() {
-        Gdx.input.setInputProcessor(this);
-
         batch = new SpriteBatch();
 
         textList.add("开始");
@@ -56,13 +52,6 @@ public class StartScreen extends BaseScreen implements InputProcessor {
     }
 
     @Override public boolean keyUp(int keycode) { return false; }
-    @Override public boolean keyTyped(char character) { return false; }
-    @Override public boolean touchDown(int screenX, int screenY, int pointer, int button) { return false; }
-    @Override public boolean touchUp(int screenX, int screenY, int pointer, int button) { return false; }
-    @Override public boolean touchCancelled(int screenX, int screenY, int pointer, int button) { return false; }
-    @Override public boolean touchDragged(int screenX, int screenY, int pointer) { return false; }
-    @Override public boolean mouseMoved(int screenX, int screenY) { return false; }
-    @Override public boolean scrolled(float amountX, float amountY) { return false; }
 
     private void renderTextOnScreen() {
         for (int i = 0; i < textList.size(); i ++) {

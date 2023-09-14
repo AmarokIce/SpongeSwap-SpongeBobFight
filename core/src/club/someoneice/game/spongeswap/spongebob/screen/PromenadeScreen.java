@@ -1,22 +1,22 @@
 package club.someoneice.game.spongeswap.spongebob.screen;
 
-import java.util.List;
-
 import club.someoneice.game.spongeswap.spongebob.GameMain;
+import club.someoneice.game.spongeswap.spongebob.screen.fightstart.FightStartScreen;
+import club.someoneice.game.spongeswap.spongebob.util.BaseScreen;
+import club.someoneice.game.spongeswap.spongebob.util.SpongeBobFace;
+import club.someoneice.game.spongeswap.spongebob.util.Util;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.google.common.collect.Lists;
 
-import club.someoneice.game.spongeswap.spongebob.util.BaseScreen;
-import club.someoneice.game.spongeswap.spongebob.util.SpongeBobFace;
-import club.someoneice.game.spongeswap.spongebob.util.Util;
+import java.util.Arrays;
+import java.util.List;
 
-public class PromenadeScreen extends BaseScreen implements InputProcessor {
+public class PromenadeScreen extends BaseScreen {
 
-    private Texture[] textureSpongeBobFace = new Texture[7];
+    private final Texture[] textureSpongeBobFace = new Texture[7];
     private Texture TalkBlock;
 
     private Texture Background;
@@ -26,11 +26,10 @@ public class PromenadeScreen extends BaseScreen implements InputProcessor {
 
 
     private SpriteBatch batch;
-    private List<String> talkMessageList = Lists.newArrayList();
+    private final List<String> talkMessageList = Lists.newArrayList();
 
     @Override
     public void join() {
-        Gdx.input.setInputProcessor(this);
 
         batch = new SpriteBatch();
 
@@ -48,9 +47,8 @@ public class PromenadeScreen extends BaseScreen implements InputProcessor {
         textureSpongeBobFace[5] = SpongeBobFace.getFace(5);
         textureSpongeBobFace[6] = SpongeBobFace.getFace(6);
 
-        for (Texture textureSpongeBobFace : textureSpongeBobFace) {
-            this.disposables.add(textureSpongeBobFace);   
-        }
+        this.disposables.addAll(Arrays.asList(textureSpongeBobFace));
+
         disposables.add(TalkBlock);
         disposables.add(batch);
         disposables.add(Background);
@@ -210,7 +208,23 @@ public class PromenadeScreen extends BaseScreen implements InputProcessor {
         }
 
         batch.end();
+
+        if (ended4) {
+            if (tick < 1.0F) tick += 0.4f;
+            else {
+                tick = 0.0f;
+                Util.getInstance().initScreen();
+                tickTimes++;
+            }
+
+            if (tickTimes > 3) {
+                GameMain.INSTANCE.nextScreen(new FightStartScreen());
+            }
+        }
     }
+
+    private float tick = 0.0f;
+    private int tickTimes = 0;
 
     private void initSpeed() {
         this.speedX = 0;
@@ -220,7 +234,7 @@ public class PromenadeScreen extends BaseScreen implements InputProcessor {
 
     @Override
     public boolean keyDown(int keycode) {
-        if (this.started1) {
+        if ((started1 && !ended1) || (started2 && !ended2) || (started3 && !ended3) || (started4 && !ended4)) {
             if (keycode == Input.Keys.Z || keycode == Input.Keys.ENTER) {
                 if (talkStep == 3) {
                     this.ended1 = true;
@@ -236,7 +250,6 @@ public class PromenadeScreen extends BaseScreen implements InputProcessor {
                     this.canMove = true;
                 } else if (talkStep == 12) {
                     this.ended4 = true;
-                    canMove = false;
 
                     // TODO
                 }
@@ -245,24 +258,24 @@ public class PromenadeScreen extends BaseScreen implements InputProcessor {
                 this.talkMessageStep = 0;
                 return true;
             }
+        }
 
-            if (canMove) {
-                if (keycode == Input.Keys.S) {
-                    this.speedY -= 2;
-                    return true;
-                } else if (keycode == Input.Keys.W) {
-                    this.speedY += 2;
-                    return true;
-                } else if (keycode == Input.Keys.A) {
-                    this.speedX -= 2;
-                    return true;
-                } else if (keycode == Input.Keys.D) {
-                    this.speedX += 2;
-                    return true;
-                } else if (keycode == Input.Keys.SHIFT_LEFT || keycode == Input.Keys.SHIFT_RIGHT) {
-                    this.running = true;
-                    return true;
-                }
+        if (canMove) {
+            if (keycode == Input.Keys.S) {
+                this.speedY -= 2;
+                return true;
+            } else if (keycode == Input.Keys.W) {
+                this.speedY += 2;
+                return true;
+            } else if (keycode == Input.Keys.A) {
+                this.speedX -= 2;
+                return true;
+            } else if (keycode == Input.Keys.D) {
+                this.speedX += 2;
+                return true;
+            } else if (keycode == Input.Keys.SHIFT_LEFT || keycode == Input.Keys.SHIFT_RIGHT) {
+                this.running = true;
+                return true;
             }
         }
         return false;
@@ -289,12 +302,4 @@ public class PromenadeScreen extends BaseScreen implements InputProcessor {
         }
         return false;
     }
-    @Override public boolean keyTyped(char character) { return false; }
-    @Override public boolean touchDown(int screenX, int screenY, int pointer, int button) { return false; }
-    @Override public boolean touchUp(int screenX, int screenY, int pointer, int button) { return false; }
-    @Override public boolean touchCancelled(int screenX, int screenY, int pointer, int button) { return false; }
-    @Override public boolean touchDragged(int screenX, int screenY, int pointer) { return false; }
-    @Override public boolean mouseMoved(int screenX, int screenY) { return false; }
-    @Override public boolean scrolled(float amountX, float amountY) { return false; }
-
 }
